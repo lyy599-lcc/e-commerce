@@ -14,7 +14,18 @@ const routes = [
   },
   {
     path: '/home',
-    component: () => import('@/views/Home.vue')
+    component: () => import('@/views/Home.vue'),
+    redirect: '/welcome',
+    children: [
+      {
+        path: '/welcome',
+        component: () => import('@/views/Welcome.vue')
+      },
+      {
+        path: '/users',
+        component: () => import('@/views/user/Users.vue')
+      }
+    ]
   }
 ]
 
@@ -29,7 +40,7 @@ router.beforeEach((to, from, next) => {
   // 如果不是访问 login 则坚持sessionStorage有没有token
   const token = window.sessionStorage.getItem('token')
   if (!token) return next('/login')
-  // 如果访问非 login 并且有token 放行
+  // 如果访问非 login 并且有 token 放行
   next(true)
 })
 

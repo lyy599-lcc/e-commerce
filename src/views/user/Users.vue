@@ -94,6 +94,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size='mini'
+                @click="showSetRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -137,7 +138,10 @@
           label="密码"
           prop="password"
         >
-          <el-input v-model="addForm.password"></el-input>
+          <el-input
+            v-model="addForm.password"
+            show-password
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="邮箱"
@@ -164,7 +168,7 @@
         >确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 修改用户 -->
+    <!-- 修改用户对话框 -->
     <el-dialog
       title="修改用户"
       :visible.sync="editDialogVisible"
@@ -209,6 +213,46 @@
         <el-button
           type="primary"
           @click="edit"
+        >确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @closed="setRoleDialogClosed"
+    >
+      <div>
+        <p>当前的用户: {{userInfo.username}}</p>
+        <p>当前的角色: {{userInfo.role_name}}</p>
+        <p>分配新角色:
+          <!-- 角色选择下拉框
+          v-model：设置用户选中角色之后的id绑定数据
+          -->
+          <el-select
+            v-model="selectedRoleId"
+            placeholder="请选择角色"
+          >
+            <!-- :label 显示文本，:value 选中值 -->
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="saveRoleInfo"
         >确 定</el-button>
       </span>
     </el-dialog>
@@ -281,7 +325,16 @@ export default {
         email: '',
         mobile: ''
       },
-      editDialogVisible: false
+      // 控制显示修改用户对话框
+      editDialogVisible: false,
+      // 控制显示分配角色对话框
+      setRoleDialogVisible: false,
+      // 保存正在操作的那个用户信息
+      userInfo: {},
+      // 保存所有的角色信息
+      rolesList: [],
+      // 保存用户选中的角色id
+      selectedRoleId: ''
     }
   },
   created () {
@@ -404,6 +457,40 @@ export default {
         this.queryInfo.pagenum--
       }
       this.getUserList()
+    },
+    // 显示分配角色对话框获取下拉菜单数据
+    async showSetRole (userInfo) {
+      // 保存起来以供后续使用
+      this.userInfo = userInfo
+      const { data: res } = await this.$axios({
+        url: 'roles'
+      })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.rolesList = res.data
+      // 展示分配角色对话框
+      this.setRoleDialogVisible = true
+    },
+    // 分配用户角色
+    async saveRoleInfo () {
+      const { data: res } = await this.$axios({
+        url: `users/${this.userInfo.id}/role`,
+        method: 'PUT',
+        data: {
+          rid: this.selectedRoleId
+        }
+      })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      // 获取用户数据
+      this.getUserList()
+      // 关闭分配角色对话框
+      this.setRoleDialogVisible = false
+    },
+    // 关闭分配角色对话框时
+    setRoleDialogClosed () {
+      // 当关闭对话框的时候，重置下拉框中的内容
+      this.selectedRoleId = ''
+      this.userInfo = {}
     }
   }
 }

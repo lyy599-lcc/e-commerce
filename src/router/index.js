@@ -24,6 +24,14 @@ const routes = [
       {
         path: '/users',
         component: () => import('@/views/user/Users.vue')
+      },
+      {
+        path: '/rights',
+        component: () => import('@/views/power/Rights.vue')
+      },
+      {
+        path: '/roles',
+        component: () => import('@/views/power/Roles.vue')
       }
     ]
   }
@@ -37,7 +45,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 如果访问 login 直接放行
   if (to.path === '/login') return next()
-  // 如果不是访问 login 则坚持sessionStorage有没有token
+  // 如果不是访问 login 则监视 sessionStorage 有没有token
   const token = window.sessionStorage.getItem('token')
   if (!token) return next('/login')
   // 如果访问非 login 并且有 token 放行

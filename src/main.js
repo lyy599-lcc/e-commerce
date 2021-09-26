@@ -9,6 +9,11 @@ import '@/assets/css/global.css'
 // 导入字体图标
 import '@/assets/fonts/iconfont.css'
 
+// 全局引入 带树的表格
+import TreeTable from 'vue-table-with-tree-grid'
+// 注册 带树的表格
+Vue.component('tree-table', TreeTable)
+
 Vue.config.productionTip = false
 
 new Vue({

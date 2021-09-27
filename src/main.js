@@ -16,6 +16,13 @@ Vue.component('tree-table', TreeTable)
 
 Vue.config.productionTip = false
 
+// 注册全局自定义指令
+Vue.directive('el-focus', {
+  inserted (dom) {
+    dom.children[0].focus()
+  }
+})
+
 new Vue({
   router,
   render: h => h(App)

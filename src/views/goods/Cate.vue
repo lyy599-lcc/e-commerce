@@ -121,7 +121,6 @@
         >
           <!-- 级联选择框 -->
           <el-cascader
-            expandTrigger='hover'
             :props="cascaderProps"
             :options="parentCateList"
             v-model="selectedKeys"
@@ -208,7 +207,8 @@ export default {
         value: 'cat_id',
         label: 'cat_name',
         children: 'children',
-        checkStrictly: true
+        checkStrictly: true,
+        expandTrigger: 'hover'
       },
       // 绑定用户选择的分类值
       selectedKeys: []

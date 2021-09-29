@@ -24,7 +24,6 @@
           <span>选择商品分类：</span>
           <!-- 级联选择框 -->
           <el-cascader
-            expandTrigger='hover'
             :props="cascaderProps"
             :options="cateList"
             v-model="selectedKeys"
@@ -273,7 +272,9 @@ export default {
       cascaderProps: {
         value: 'cat_id',
         label: 'cat_name',
-        children: 'children'
+        children: 'children',
+        expandTrigger: 'hover'
+
       },
       // 绑定用户选择的分类值
       selectedKeys: [],
@@ -314,7 +315,7 @@ export default {
         this.selectedKeys = []
         this.manyTableData = []
         this.onlyTableData = []
-        return this.$msgBox.alert('必须选择【第3级】分类', '系统警告')
+        return this.$msgBox.info('必须选择【第3级】分类')
       }
 
       // 发送请求，根据用户选择的三级分类和面板获取参数数据
